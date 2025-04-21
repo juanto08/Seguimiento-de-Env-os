@@ -163,4 +163,20 @@
             <button onclick="location.href='${codigos[codigo]?.url || '#'}'">🔍</button>
           `;
           historialDiv.appendChild(item);
+        });
+      }
+
+      document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
+      document.getElementById("tracking").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          buscarTracking();
+        }
+      });
+
+      mostrarHistorial();
+    });
+  </script>
+</body>
+</html>
+
 
