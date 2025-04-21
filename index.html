@@ -4,70 +4,65 @@
   <meta charset="UTF-8">
   <title>Buscador de Tracking</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6f9;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
+      color: #fff;
     }
     .container {
-      background: white;
-      padding: 40px 30px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
       width: 100%;
-      max-width: 400px;
-      transition: all 0.3s ease-in-out;
+      max-width: 450px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
     h1 {
       margin-bottom: 20px;
-      color: #333;
+      font-size: 26px;
     }
     input {
       padding: 12px;
       width: 100%;
       font-size: 16px;
-      border: 2px solid #ccc;
+      border: none;
       border-radius: 8px;
-      transition: border-color 0.3s;
-    }
-    input:focus {
-      border-color: #007bff;
-      outline: none;
+      margin-bottom: 15px;
     }
     button {
-      margin-top: 20px;
       width: 100%;
       padding: 12px;
-      background-color: #007bff;
+      background-color: #28a745;
       color: white;
       border: none;
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s;
     }
     button:hover {
-      background-color: #0056b3;
+      background-color: #218838;
     }
-    #mensaje {
-      margin-top: 20px;
-      font-weight: bold;
-      transition: all 0.3s ease-in-out;
+    #limpiarHistorial {
+      background-color: #dc3545;
+    }
+    #limpiarHistorial:hover {
+      background-color: #c82333;
     }
     .spinner {
-      margin: 20px auto;
+      margin: 15px auto;
       width: 40px;
       height: 40px;
       border: 4px solid #ccc;
-      border-top-color: #007bff;
+      border-top-color: #28a745;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       display: none;
@@ -75,52 +70,140 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+    #mensaje {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .historial {
+      margin-top: 25px;
+      text-align: left;
+    }
+    .historial-item {
+      background: #ffffff22;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .historial-item:hover {
+      background: #ffffff44;
+    }
+    .logo {
+      width: 30px;
+      margin-right: 10px;
+    }
   </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚚 Seguimiento de Envíos</h1>
+    <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
+    <button id="btnBuscar">Buscar</button>
+    <div class="spinner"></div>
+    <p id="mensaje"></p>
+
+    <div class="historial">
+      <h3>📜 Historial:</h3>
+      <div id="listaHistorial"></div>
+      <button id="limpiarHistorial">🗑️ Limpiar historial</button>
+    </div>
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const codigos = {
-        "BGA0465019": "https://www.cma-cgm.com/ebusiness/tracking/search",
-        "27801824": "https://www.hapag-lloyd.com/en/online-business/track/track-by-booking-solution.html?booking=27801824",
-        "251382139": "https://www.maersk.com/tracking/251382139",
-        "COSU6413299240": "https://elines.coscoshipping.com/ebusiness/cargoTracking"
+        "BGA0465019": {
+          url: "https://www.cma-cgm.com/ebusiness/tracking/search",
+          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png"
+        },
+        "27801824": {
+          url: "https://www.hapag-lloyd.com/en/online-business/track/track-by-booking-solution.html?booking=27801824",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png"
+        },
+        "251382139": {
+          url: "https://www.maersk.com/tracking/251382139",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png"
+        },
+        "COSU6413299240": {
+          url: "https://elines.coscoshipping.com/ebusiness/cargoTracking",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/6/65/COSCO_Shipping_logo.png"
+        }
       };
+
+      const spinner = document.querySelector(".spinner");
+      const mensaje = document.getElementById("mensaje");
+      const historialDiv = document.getElementById("listaHistorial");
 
       function buscarTracking() {
         const input = document.getElementById("tracking").value.trim().toUpperCase();
-        const mensaje = document.getElementById("mensaje");
-        const spinner = document.querySelector(".spinner");
 
         mensaje.textContent = "";
-        mensaje.style.color = "red";
+        mensaje.style.color = "white";
 
         if (codigos[input]) {
           spinner.style.display = "block";
-          mensaje.style.color = "green";
           mensaje.textContent = "Redirigiendo, por favor espera...";
+
+          guardarEnHistorial(input);
+
           setTimeout(() => {
-            window.location.href = codigos[input];
+            window.location.href = codigos[input].url;
           }, 1500);
         } else {
+          mensaje.style.color = "#ff4d4d";
           mensaje.textContent = "Código de tracking no encontrado. Intenta con otro.";
         }
       }
 
+      function guardarEnHistorial(codigo) {
+        let historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
+        if (!historial.includes(codigo)) {
+          historial.unshift(codigo);
+          localStorage.setItem("trackingHistorial", JSON.stringify(historial.slice(0, 5)));
+        }
+        mostrarHistorial();
+      }
+
+      function mostrarHistorial() {
+        const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
+        historialDiv.innerHTML = "";
+
+        historial.forEach(codigo => {
+          const item = document.createElement("div");
+          item.className = "historial-item";
+          item.innerHTML = `
+            <div style="display: flex; align-items: center;">
+              ${codigos[codigo]?.logo ? `<img class="logo" src="${codigos[codigo].logo}" alt="logo">` : ''}
+              <span>${codigo}</span>
+            </div>
+            <button onclick="location.href='${codigos[codigo]?.url || '#'}'">🔍</button>
+          `;
+          historialDiv.appendChild(item);
+        });
+      }
+
+      // Eventos
       document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
       document.getElementById("tracking").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
           buscarTracking();
         }
       });
+
+      document.getElementById("limpiarHistorial").addEventListener("click", () => {
+        if (confirm("¿Estás seguro de que quieres borrar el historial?")) {
+          localStorage.removeItem("trackingHistorial");
+          historialDiv.innerHTML = "";
+          mensaje.textContent = "Historial eliminado correctamente.";
+          mensaje.style.color = "lightgreen";
+        }
+      });
+
+      mostrarHistorial();
     });
   </script>
-</head>
-<body>
-  <div class="container">
-    <h1>📦 Seguimiento de Envíos</h1>
-    <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
-    <button id="btnBuscar">Buscar</button>
-    <div class="spinner"></div>
-    <p id="mensaje"></p>
-  </div>
 </body>
 </html>
