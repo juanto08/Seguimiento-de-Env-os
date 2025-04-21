@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscador de Tracking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+    }
+    #mensaje {
+      color: red;
+      margin-top: 15px;
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Diccionario de códigos y sus URLs correspondientes
+      const codigos = {
+        "BGA0465019": "https://www.cma-cgm.com/eBusiness/Tracking",
+        "27801824": "https://www.hapag-lloyd.com/en/online-business/track/track-by-booking-solution.html",
+        "251382139": "https://www.maersk.com/tracking/",
+        "COSU6413299240": "https://elines.coscoshipping.com/ebusiness/cargoTracking"
+        // Puedes seguir agregando más aquí
+      };
+
+      function buscarTracking() {
+        const input = document.getElementById("tracking").value.trim().toUpperCase();
+        const mensaje = document.getElementById("mensaje");
+
+        if (codigos[input]) {
+          window.location.href = codigos[input]; // Redireccionar
+        } else {
+          mensaje.textContent = "Código de tracking no encontrado. Intenta con otro.";
+        }
+      }
+
+      // Eventos
+      document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
+      document.getElementById("tracking").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          buscarTracking();
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Seguimiento de Envíos</h1>
+  <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
+  <br><br>
+  <button id="btnBuscar">Buscar</button>
+  <p id="mensaje"></p>
+</body>
+</html>
