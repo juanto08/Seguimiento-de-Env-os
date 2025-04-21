@@ -4,44 +4,107 @@
   <meta charset="UTF-8">
   <title>Buscador de Tracking</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
+    * {
+      box-sizing: border-box;
     }
-    input, button {
-      padding: 10px;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      transition: all 0.3s ease-in-out;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input {
+      padding: 12px;
+      width: 100%;
       font-size: 16px;
-      width: 300px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
     }
     #mensaje {
-      color: red;
-      margin-top: 15px;
+      margin-top: 20px;
+      font-weight: bold;
+      transition: all 0.3s ease-in-out;
+    }
+    .spinner {
+      margin: 20px auto;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ccc;
+      border-top-color: #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Diccionario de códigos y sus URLs correspondientes
       const codigos = {
         "BGA0465019": "https://www.cma-cgm.com/ebusiness/tracking/search",
         "27801824": "https://www.hapag-lloyd.com/en/online-business/track/track-by-booking-solution.html?booking=27801824",
         "251382139": "https://www.maersk.com/tracking/251382139",
         "COSU6413299240": "https://elines.coscoshipping.com/ebusiness/cargoTracking"
-        // Puedes seguir agregando más aquí
       };
 
       function buscarTracking() {
         const input = document.getElementById("tracking").value.trim().toUpperCase();
         const mensaje = document.getElementById("mensaje");
+        const spinner = document.querySelector(".spinner");
+
+        mensaje.textContent = "";
+        mensaje.style.color = "red";
 
         if (codigos[input]) {
-          window.location.href = codigos[input]; // Redireccionar
+          spinner.style.display = "block";
+          mensaje.style.color = "green";
+          mensaje.textContent = "Redirigiendo, por favor espera...";
+          setTimeout(() => {
+            window.location.href = codigos[input];
+          }, 1500);
         } else {
           mensaje.textContent = "Código de tracking no encontrado. Intenta con otro.";
         }
       }
 
-      // Eventos
       document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
       document.getElementById("tracking").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
@@ -52,10 +115,13 @@
   </script>
 </head>
 <body>
-  <h1>Seguimiento de Envíos</h1>
-  <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
-  <br><br>
-  <button id="btnBuscar">Buscar</button>
-  <p id="mensaje"></p>
+  <div class="container">
+    <h1>📦 Seguimiento de Envíos</h1>
+    <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
+    <button id="btnBuscar">Buscar</button>
+    <div class="spinner"></div>
+    <p id="mensaje"></p>
+  </div>
 </body>
 </html>
+
