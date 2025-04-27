@@ -143,14 +143,21 @@
         mensaje.textContent = "";
         mensaje.style.color = "white";
 
+        if (!input) {
+          mensaje.style.color = "#ffc107";
+          mensaje.textContent = "Por favor, ingresa un código de tracking.";
+          return;
+        }
+
         if (codigos[input]) {
           spinner.style.display = "block";
-          mensaje.textContent = "Redirigiendo, por favor espera...";
+          mensaje.textContent = "Abriendo en una nueva ventana...";
 
           guardarEnHistorial(input);
 
           setTimeout(() => {
-            window.location.href = codigos[input].url;
+            abrirVentanaEmergente(codigos[input].url);
+            spinner.style.display = "none";
           }, 1500);
         } else {
           mensaje.style.color = "#ff4d4d";
@@ -179,10 +186,19 @@
               ${codigos[codigo]?.logo ? `<img class="logo" src="${codigos[codigo].logo}" alt="logo">` : ''}
               <span>${codigo}</span>
             </div>
-            <button onclick="location.href='${codigos[codigo]?.url || '#'}'">🔍</button>
+            <button onclick="window.open('${codigos[codigo]?.url || '#'}', '_blank', 'width=1000,height=700')">🔍</button>
           `;
           historialDiv.appendChild(item);
         });
+      }
+
+      function abrirVentanaEmergente(url) {
+        const width = 1000;
+        const height = 700;
+        const left = (screen.width - width) / 2;
+        const top = (screen.height - height) / 2;
+
+        window.open(url, "_blank", `width=${width},height=${height},left=${left},top=${top}`);
       }
 
       // Eventos
