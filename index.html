@@ -21,7 +21,7 @@
       padding: 30px;
       border-radius: 15px;
       width: 100%;
-      max-width: 450px;
+      max-width: 500px;
       text-align: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
@@ -95,20 +95,38 @@
       width: 30px;
       margin-right: 10px;
     }
+    .section {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🚚 Seguimiento de Envíos</h1>
+    
+    <!-- Buscador por código de seguimiento -->
     <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
     <button id="btnBuscar">Buscar</button>
     <div class="spinner"></div>
     <p id="mensaje"></p>
 
+    <!-- Historial de códigos -->
     <div class="historial">
       <h3>📜 Historial:</h3>
       <div id="listaHistorial"></div>
       <button id="limpiarHistorial">🗑️ Limpiar historial</button>
+    </div>
+
+    <!-- Buscador de Razón Social -->
+    <div class="section">
+      <h2>📑 Buscar Razón Social</h2>
+      <input type="text" id="razonSocial" placeholder="Ingresa la razón social">
+      <button id="btnBuscarRazon">Buscar Razón Social</button>
+      
+      <div class="historial" id="historialRazones">
+        <h3>Códigos de Tracking para la Razón Social:</h3>
+        <div id="listaRazones"></div>
+      </div>
     </div>
   </div>
 
@@ -133,47 +151,24 @@
         }
       };
 
+      // Base de datos de razones sociales
+      const baseDatosRazones = {
+        "TARSON SAS": [
+          { codigo: "BGA0465019", naviera: "CMA CGM" },
+          { codigo: "27801824", naviera: "Hapag-Lloyd" }
+        ],
+        "EMPRESA X": [
+          { codigo: "251382139", naviera: "Maersk" },
+          { codigo: "COSU6413299240", naviera: "COSCO" }
+        ]
+      };
+
       const spinner = document.querySelector(".spinner");
       const mensaje = document.getElementById("mensaje");
       const historialDiv = document.getElementById("listaHistorial");
+      const historialRazonesDiv = document.getElementById("listaRazones");
 
-      function buscarTracking() {
-        const input = document.getElementById("tracking").value.trim().toUpperCase();
-
-        mensaje.textContent = "";
-        mensaje.style.color = "white";
-
-        if (!input) {
-          mensaje.style.color = "#ffc107";
-          mensaje.textContent = "Por favor, ingresa un código de tracking.";
-          return;
-        }
-
-        if (codigos[input]) {
-          spinner.style.display = "block";
-          mensaje.textContent = "Abriendo en una nueva ventana...";
-
-          guardarEnHistorial(input);
-
-          setTimeout(() => {
-            abrirVentanaEmergente(codigos[input].url);
-            spinner.style.display = "none";
-          }, 1500);
-        } else {
-          mensaje.style.color = "#ff4d4d";
-          mensaje.textContent = "Código de tracking no encontrado. Intenta con otro.";
-        }
-      }
-
-      function guardarEnHistorial(codigo) {
-        let historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
-        if (!historial.includes(codigo)) {
-          historial.unshift(codigo);
-          localStorage.setItem("trackingHistorial", JSON.stringify(historial.slice(0, 5)));
-        }
-        mostrarHistorial();
-      }
-
+      // Función para mostrar el historial de tracking
       function mostrarHistorial() {
         const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
         historialDiv.innerHTML = "";
@@ -192,6 +187,30 @@
         });
       }
 
+      // Función para buscar código de tracking
+      function buscarTracking() {
+        const input = document.getElementById("tracking").value.trim().toUpperCase();
+
+        mensaje.textContent = "";
+        mensaje.style.color = "white";
+
+        if (codigos[input]) {
+          spinner.style.display = "block";
+          mensaje.textContent = "Abriendo en una nueva ventana...";
+
+          guardarEnHistorial(input);
+
+          setTimeout(() => {
+            abrirVentanaEmergente(codigos[input].url);
+            spinner.style.display = "none";
+          }, 1500);
+        } else {
+          mensaje.style.color = "#ff4d4d";
+          mensaje.textContent = "Código de tracking no encontrado. Intenta con otro.";
+        }
+      }
+
+      // Función para abrir ventana emergente
       function abrirVentanaEmergente(url) {
         const width = 1000;
         const height = 700;
@@ -201,23 +220,43 @@
         window.open(url, "_blank", `width=${width},height=${height},left=${left},top=${top}`);
       }
 
+      // Función para guardar en historial
+      function guardarEnHistorial(codigo) {
+        let historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
+        if (!historial.includes(codigo)) {
+          historial.unshift(codigo);
+          localStorage.setItem("trackingHistorial", JSON.stringify(historial.slice(0, 5)));
+        }
+        mostrarHistorial();
+      }
+
+      // Función para buscar razón social
+      function buscarRazonSocial() {
+        const razonSocial = document.getElementById("razonSocial").value.trim();
+        const resultados = baseDatosRazones[razonSocial];
+
+        historialRazonesDiv.innerHTML = "";
+        if (resultados) {
+          resultados.forEach((resultado) => {
+            const item = document.createElement("div");
+            item.className = "historial-item";
+            item.innerHTML = `
+              <div>
+                <strong>${resultado.codigo}</strong> - ${resultado.naviera}
+              </div>
+            `;
+            historialRazonesDiv.appendChild(item);
+          });
+        } else {
+          historialRazonesDiv.innerHTML = "<p>No se encontraron resultados para esta razón social.</p>";
+        }
+      }
+
       // Eventos
       document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
-      document.getElementById("tracking").addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-          buscarTracking();
-        }
-      });
+      document.getElementById("btnBuscarRazon").addEventListener("click", buscarRazonSocial);
 
-      document.getElementById("limpiarHistorial").addEventListener("click", () => {
-        if (confirm("¿Estás seguro de que quieres borrar el historial?")) {
-          localStorage.removeItem("trackingHistorial");
-          historialDiv.innerHTML = "";
-          mensaje.textContent = "Historial eliminado correctamente.";
-          mensaje.style.color = "lightgreen";
-        }
-      });
-
+      // Cargar historial de tracking
       mostrarHistorial();
     });
   </script>
