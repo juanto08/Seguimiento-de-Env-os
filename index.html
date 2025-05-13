@@ -51,10 +51,10 @@
       margin-bottom: 10px;
     }
     button:hover { background-color: #218838; }
-    #limpiarHistorial {
+    #limpiarHistorial, #limpiarHistorialRazones {
       background-color: #dc3545;
     }
-    #limpiarHistorial:hover {
+    #limpiarHistorial:hover, #limpiarHistorialRazones:hover {
       background-color: #c82333;
     }
     .spinner {
@@ -124,6 +124,12 @@
         <h3>Códigos de Tracking para la Razón Social:</h3>
         <div id="listaRazones"></div>
       </div>
+
+      <div class="historial">
+        <h3>🕘 Historial de búsquedas:</h3>
+        <div id="historialBusquedaRazones"></div>
+        <button id="limpiarHistorialRazones">🗑️ Limpiar historial de razones sociales</button>
+      </div>
     </div>
 
     <div class="section">
@@ -142,7 +148,7 @@
           url: "https://www.cma-cgm.com/ebusiness/tracking/search",
           logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png"
         },
-          "BGA0466452": {
+        "BGA0466452": {
           url: "https://www.cma-cgm.com/ebusiness/tracking/search",
           logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png"
         },
@@ -158,7 +164,7 @@
           url: "https://www.maersk.com/tracking/251382139",
           logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png"
         },
-          "250248505": {
+        "250248505": {
           url: "https://www.maersk.com/tracking/250248505",
           logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png"
         },
@@ -202,6 +208,32 @@
         });
       }
 
+      function mostrarHistorialRazones() {
+        const historial = JSON.parse(localStorage.getItem("historialRazones")) || [];
+        const contenedor = document.getElementById("historialBusquedaRazones");
+        contenedor.innerHTML = "";
+
+        historial.forEach(razon => {
+          const item = document.createElement("div");
+          item.className = "historial-item";
+          item.textContent = razon;
+          item.addEventListener("click", () => {
+            document.getElementById("razonSocial").value = razon;
+            buscarRazonSocial();
+          });
+          contenedor.appendChild(item);
+        });
+      }
+
+      function guardarHistorialRazon(razon) {
+        let historial = JSON.parse(localStorage.getItem("historialRazones")) || [];
+        if (!historial.includes(razon)) {
+          historial.unshift(razon);
+          localStorage.setItem("historialRazones", JSON.stringify(historial.slice(0, 5)));
+        }
+        mostrarHistorialRazones();
+      }
+
       function buscarTracking() {
         const input = document.getElementById("tracking").value.trim().toUpperCase();
         mensaje.textContent = "";
@@ -242,8 +274,9 @@
       function buscarRazonSocial() {
         const razonSocial = document.getElementById("razonSocial").value.trim();
         const resultados = baseDatosRazones[razonSocial];
+        guardarHistorialRazon(razonSocial);
         historialRazonesDiv.innerHTML = "";
-        
+
         if (resultados) {
           resultados.forEach((resultado) => {
             const item = document.createElement("div");
@@ -256,7 +289,6 @@
               <button>🔍</button>
             `;
 
-            // Añadir el evento de la lupa para abrir el sitio de la naviera
             const lupaButton = item.querySelector("button");
             lupaButton.addEventListener("click", () => {
               const navieraUrl = codigos[resultado.codigo]?.url;
@@ -300,8 +332,13 @@
         localStorage.removeItem("trackingHistorial");
         mostrarHistorial();
       });
+      document.getElementById("limpiarHistorialRazones").addEventListener("click", () => {
+        localStorage.removeItem("historialRazones");
+        mostrarHistorialRazones();
+      });
 
       mostrarHistorial();
+      mostrarHistorialRazones();
     });
   </script>
 </body>
