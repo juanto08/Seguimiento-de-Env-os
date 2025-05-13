@@ -151,7 +151,6 @@
         }
       };
 
-      // Base de datos de razones sociales
       const baseDatosRazones = {
         "TARSON SAS": [
           { codigo: "BGA0465019", naviera: "CMA CGM" },
@@ -168,7 +167,6 @@
       const historialDiv = document.getElementById("listaHistorial");
       const historialRazonesDiv = document.getElementById("listaRazones");
 
-      // Función para mostrar el historial de tracking
       function mostrarHistorial() {
         const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
         historialDiv.innerHTML = "";
@@ -187,17 +185,14 @@
         });
       }
 
-      // Función para buscar código de tracking
       function buscarTracking() {
         const input = document.getElementById("tracking").value.trim().toUpperCase();
-
         mensaje.textContent = "";
         mensaje.style.color = "white";
 
         if (codigos[input]) {
           spinner.style.display = "block";
           mensaje.textContent = "Abriendo en una nueva ventana...";
-
           guardarEnHistorial(input);
 
           setTimeout(() => {
@@ -210,17 +205,14 @@
         }
       }
 
-      // Función para abrir ventana emergente
       function abrirVentanaEmergente(url) {
         const width = 1000;
         const height = 700;
         const left = (screen.width - width) / 2;
         const top = (screen.height - height) / 2;
-
         window.open(url, "_blank", `width=${width},height=${height},left=${left},top=${top}`);
       }
 
-      // Función para guardar en historial
       function guardarEnHistorial(codigo) {
         let historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
         if (!historial.includes(codigo)) {
@@ -230,35 +222,10 @@
         mostrarHistorial();
       }
 
-      // Función para buscar razón social
       function buscarRazonSocial() {
         const razonSocial = document.getElementById("razonSocial").value.trim();
         const resultados = baseDatosRazones[razonSocial];
-
         historialRazonesDiv.innerHTML = "";
         if (resultados) {
           resultados.forEach((resultado) => {
-            const item = document.createElement("div");
-            item.className = "historial-item";
-            item.innerHTML = `
-              <div>
-                <strong>${resultado.codigo}</strong> - ${resultado.naviera}
-              </div>
-            `;
-            historialRazonesDiv.appendChild(item);
-          });
-        } else {
-          historialRazonesDiv.innerHTML = "<p>No se encontraron resultados para esta razón social.</p>";
-        }
-      }
-
-      // Eventos
-      document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
-      document.getElementById("btnBuscarRazon").addEventListener("click", buscarRazonSocial);
-
-      // Cargar historial de tracking
-      mostrarHistorial();
-    });
-  </script>
-</body>
-</html>
+            const item =
