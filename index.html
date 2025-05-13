@@ -4,14 +4,141 @@
   <meta charset="UTF-8">
   <title>Buscador de Tracking</title>
   <style>
-    /* ... TU ESTILO SIGUE IGUAL ... */
-    /* Todo el bloque <style> se mantiene sin cambios */
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      overflow-y: auto;
+      max-height: 95vh;
+    }
+    h1, h2, h3 {
+      margin-bottom: 15px;
+    }
+    input {
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-bottom: 10px;
+    }
+    button:hover { background-color: #218838; }
+    #limpiarHistorial, #limpiarHistorialRazones {
+      background-color: #dc3545;
+    }
+    #limpiarHistorial:hover, #limpiarHistorialRazones:hover {
+      background-color: #c82333;
+    }
+    .spinner {
+      margin: 15px auto;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ccc;
+      border-top-color: #28a745;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #mensaje {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .historial {
+      margin-top: 25px;
+      text-align: left;
+    }
+    .historial-item {
+      background: #ffffff22;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .historial-item:hover {
+      background: #ffffff44;
+    }
+    .logo {
+      width: 30px;
+      margin-right: 10px;
+    }
+    .section {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- ... TU HTML SIGUE IGUAL ... -->
-    <!-- Todo el contenido dentro de <body> se mantiene sin cambios -->
+    <h1>🚚 Seguimiento de Envíos</h1>
+
+    <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
+    <button id="btnBuscar">Buscar</button>
+    <div class="spinner"></div>
+    <p id="mensaje"></p>
+
+    <div class="historial">
+      <h3>📜 Historial:</h3>
+      <div id="listaHistorial"></div>
+      <button id="limpiarHistorial">🗑️ Limpiar historial</button>
+    </div>
+
+    <div class="section">
+      <h2>📑 Buscar Razón Social</h2>
+      <input type="text" id="razonSocial" placeholder="Ingresa la razón social">
+      <button id="btnBuscarRazon">Buscar Razón Social</button>
+      
+      <div class="historial" id="historialRazones">
+        <h3>Códigos de Tracking para la Razón Social:</h3>
+        <div id="listaRazones"></div>
+      </div>
+
+      <div class="historial">
+        <h3>🕘 Historial de búsquedas:</h3>
+        <div id="historialBusquedaRazones"></div>
+        <button id="limpiarHistorialRazones">🗑️ Limpiar historial de razones sociales</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>➕ Agregar Nueva Razón Social</h2>
+      <input type="text" id="nuevaRazon" placeholder="Razón Social">
+      <input type="text" id="nuevoCodigo" placeholder="Código de Tracking">
+      <input type="text" id="nuevaNaviera" placeholder="Nombre de la Naviera">
+      <button id="btnAgregarRazon">Agregar</button>
+    </div>
   </div>
 
   <script>
@@ -47,8 +174,7 @@
         }
       };
 
-      // Cargar baseDatosRazones desde localStorage o usar valores por defecto
-      let baseDatosRazones = JSON.parse(localStorage.getItem("baseDatosRazones")) || {
+      let baseDatosRazones = {
         "TARSON SAS": [
           { codigo: "BGA0466452", naviera: "CMA ETD 02/05/2025 ETA 15/05/2025" },
         ],
@@ -65,10 +191,6 @@
       const mensaje = document.getElementById("mensaje");
       const historialDiv = document.getElementById("listaHistorial");
       const historialRazonesDiv = document.getElementById("listaRazones");
-
-      function guardarBaseDatos() {
-        localStorage.setItem("baseDatosRazones", JSON.stringify(baseDatosRazones));
-      }
 
       function mostrarHistorial() {
         const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
@@ -168,7 +290,6 @@
               </div>
               <button>🔍</button>
             `;
-
             const lupaButton = item.querySelector("button");
             lupaButton.addEventListener("click", () => {
               const navieraUrl = codigos[resultado.codigo]?.url;
@@ -178,7 +299,6 @@
                 alert("No se encontró la URL para este código de tracking.");
               }
             });
-
             historialRazonesDiv.appendChild(item);
           });
         } else {
@@ -196,7 +316,6 @@
             baseDatosRazones[nuevaRazon] = [];
           }
           baseDatosRazones[nuevaRazon].push({ codigo: nuevoCodigo, naviera: nuevaNaviera });
-          guardarBaseDatos(); // Guardar en localStorage
           alert("Razón social agregada correctamente. Ahora puedes buscarla.");
           document.getElementById("nuevaRazon").value = '';
           document.getElementById("nuevoCodigo").value = '';
