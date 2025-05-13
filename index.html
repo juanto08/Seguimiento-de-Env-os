@@ -288,11 +288,21 @@
               </div>
               <button>🔍</button>
             `;
+
+            const lupaButton = item.querySelector("button");
+            lupaButton.addEventListener("click", () => {
+              const navieraUrl = codigos[resultado.codigo]?.url;
+              if (navieraUrl) {
+                window.open(navieraUrl, "_blank");
+              } else {
+                alert("No se encontró la URL para este código de tracking.");
+              }
+            });
+
             historialRazonesDiv.appendChild(item);
           });
         } else {
-          mensaje.style.color = "#ff4d4d";
-          mensaje.textContent = "Razón social no encontrada.";
+          historialRazonesDiv.innerHTML = `<p style="color: #ff4d4d;">No se encontraron resultados para la razón social ingresada.</p>`;
         }
       }
 
@@ -306,62 +316,29 @@
             baseDatosRazones[nuevaRazon] = [];
           }
           baseDatosRazones[nuevaRazon].push({ codigo: nuevoCodigo, naviera: nuevaNaviera });
-
-          localStorage.setItem("baseDatosRazones", JSON.stringify(baseDatosRazones));
           alert("Razón social agregada correctamente. Ahora puedes buscarla.");
           document.getElementById("nuevaRazon").value = '';
           document.getElementById("nuevoCodigo").value = '';
           document.getElementById("nuevaNaviera").value = '';
-          mostrarBaseDatosRazones();
         } else {
           alert("Por favor completa todos los campos.");
         }
       }
 
-      function cargarDatosDesdeLocalStorage() {
-        const datosGuardados = localStorage.getItem("baseDatosRazones");
-        if (datosGuardados) {
-          baseDatosRazones = JSON.parse(datosGuardados);
-        }
-      }
-
-      function mostrarBaseDatosRazones() {
-        const contenedorRazones = document.getElementById("listaRazones");
-        contenedorRazones.innerHTML = "";
-
-        for (const razon in baseDatosRazones) {
-          const item = document.createElement("div");
-          item.className = "historial-item";
-          item.innerHTML = `
-            <strong>${razon}</strong>
-            <div>
-              ${baseDatosRazones[razon].map(dato => `<p><strong>${dato.codigo}</strong> - ${dato.naviera}</p>`).join('')}
-            </div>
-          `;
-          contenedorRazones.appendChild(item);
-        }
-      }
-
-      // Función para limpiar el historial de razones sociales
+      document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
+      document.getElementById("btnBuscarRazon").addEventListener("click", buscarRazonSocial);
+      document.getElementById("btnAgregarRazon").addEventListener("click", agregarRazonSocial);
+      document.getElementById("limpiarHistorial").addEventListener("click", () => {
+        localStorage.removeItem("trackingHistorial");
+        mostrarHistorial();
+      });
       document.getElementById("limpiarHistorialRazones").addEventListener("click", () => {
         localStorage.removeItem("historialRazones");
         mostrarHistorialRazones();
       });
 
-      // Función para limpiar el historial de tracking
-      document.getElementById("limpiarHistorial").addEventListener("click", () => {
-        localStorage.removeItem("trackingHistorial");
-        mostrarHistorial();
-      });
-
-      document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
-      document.getElementById("btnBuscarRazon").addEventListener("click", buscarRazonSocial);
-      document.getElementById("btnAgregarRazon").addEventListener("click", agregarRazonSocial);
-
-      cargarDatosDesdeLocalStorage();
       mostrarHistorial();
       mostrarHistorialRazones();
-      mostrarBaseDatosRazones();
     });
   </script>
 </body>
