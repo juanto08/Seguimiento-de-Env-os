@@ -231,6 +231,7 @@
         const razonSocial = document.getElementById("razonSocial").value.trim();
         const resultados = baseDatosRazones[razonSocial];
         historialRazonesDiv.innerHTML = "";
+        
         if (resultados) {
           resultados.forEach((resultado) => {
             const item = document.createElement("div");
@@ -240,8 +241,20 @@
                 ${codigos[resultado.codigo]?.logo ? `<img class="logo" src="${codigos[resultado.codigo].logo}" alt="logo">` : ''}
                 <span><strong>${resultado.codigo}</strong> - ${resultado.naviera}</span>
               </div>
-              <button onclick="window.open('${codigos[resultado.codigo]?.url || '#'}', '_blank', 'width=1000,height=700')">🔍</button>
+              <button>🔍</button>
             `;
+
+            // Añadir el evento de la lupa para abrir el sitio de la naviera
+            const lupaButton = item.querySelector("button");
+            lupaButton.addEventListener("click", () => {
+              const navieraUrl = codigos[resultado.codigo]?.url;
+              if (navieraUrl) {
+                window.open(navieraUrl, "_blank");
+              } else {
+                alert("No se encontró la URL para este código de tracking.");
+              }
+            });
+
             historialRazonesDiv.appendChild(item);
           });
         } else {
