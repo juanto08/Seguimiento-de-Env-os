@@ -74,6 +74,12 @@
       margin-top: 10px;
       font-weight: bold;
     }
+    #copiadoMensaje {
+      display: none;
+      margin-top: 10px;
+      color: #90ee90;
+      font-weight: bold;
+    }
     .historial {
       margin-top: 25px;
       text-align: left;
@@ -110,6 +116,7 @@
     <button id="btnBuscar">Buscar</button>
     <div class="spinner"></div>
     <p id="mensaje"></p>
+    <div id="copiadoMensaje"></div> <!-- ✅ Nuevo mensaje visual -->
 
     <div class="historial">
       <h3>📜 Historial:</h3>
@@ -152,7 +159,7 @@
         },
         "250248505": {
           url: "https://www.maersk.com/tracking/250248505",
-          logo: "https://1000logos.net/maersk-logo/",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Maersk_Group_logo.svg/512px-Maersk_Group_logo.svg.png",
         },
       };
 
@@ -193,10 +200,18 @@
       const historialDiv = document.getElementById("listaHistorial");
       const historialRazonesDiv = document.getElementById("listaRazones");
 
+      function mostrarCopiado(texto) {
+        const mensajeCopiado = document.getElementById("copiadoMensaje");
+        mensajeCopiado.textContent = texto;
+        mensajeCopiado.style.display = "block";
+        setTimeout(() => {
+          mensajeCopiado.style.display = "none";
+        }, 2000);
+      }
+
       function mostrarHistorial() {
         const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
         historialDiv.innerHTML = "";
-
         historial.forEach((codigo) => {
           const item = document.createElement("div");
           item.className = "historial-item";
@@ -275,7 +290,7 @@
       }
 
       function buscarRazonSocial() {
-        const razonSocial = document.getElementById("razonSocial").value.trim();
+        const razonSocial = document.getElementById("razonSocial").value.trim().toUpperCase();
         const resultados = baseDatosRazones[razonSocial];
         guardarHistorialRazon(razonSocial);
         historialRazonesDiv.innerHTML = "";
@@ -304,8 +319,15 @@
 
             item.querySelector("button").addEventListener("click", () => {
               const url = codigos[codigo]?.url;
-              if (url) window.open(url, "_blank");
-              else alert("No se encontró la URL para este código de tracking.");
+
+              navigator.clipboard.writeText(codigo).then(() => {
+                mostrarCopiado(`📋 Código ${codigo} copiado al portapapeles`);
+                if (url) window.open(url, "_blank");
+                else alert("No se encontró la URL para este código de tracking.");
+              }).catch(err => {
+                console.error("Error al copiar al portapapeles: ", err);
+                if (url) window.open(url, "_blank");
+              });
             });
 
             historialRazonesDiv.appendChild(item);
