@@ -116,7 +116,7 @@
     <button id="btnBuscar">Buscar</button>
     <div class="spinner"></div>
     <p id="mensaje"></p>
-    <div id="copiadoMensaje"></div> <!-- ✅ Nuevo mensaje visual -->
+    <div id="copiadoMensaje"></div>
 
     <div class="historial">
       <h3>📜 Historial:</h3>
@@ -286,10 +286,10 @@
             const llegada = estado.llegada ? `🚩 Llegada: ${estado.llegada}` : "";
             const avance = estado.avance ? `📊 Avance: ${estado.avance} ⏳` : "";
 
-            // Determinar el estado del GIF según el avance
-            const barcoGif = (estado.avance === "0%" || estado.avance === "100%") 
-              ? "https://i.gifer.com/DYyg.gif"  // GIF estático (barco quieto)
-              : "https://i.gifer.com/3Ecz.gif"; // GIF en movimiento (barco en movimiento)
+            // Mostrar el GIF del barco según el avance
+            const barcoGif = (estado.avance === "100%" || estado.avance === "0%") 
+              ? "<img src='https://i.gifer.com/DYyg.gif' alt='Barco quieto' style='width: 50px; height: auto;'>"
+              : "<img src='https://media.giphy.com/media/2ZdpYel8paUEg/giphy.gif' alt='Barco en movimiento' style='width: 50px; height: auto;'>";
 
             const item = document.createElement("div");
             item.className = "historial-item";
@@ -302,7 +302,7 @@
                 ${salida ? `<div>${salida}</div>` : ""}
                 ${llegada ? `<div>${llegada}</div>` : ""}
                 ${avance ? `<div>${avance}</div>` : ""}
-                <img src="${barcoGif}" alt="Barco" width="50" />
+                ${barcoGif}
               </div>
               <button>🔍</button>
             `;
