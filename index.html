@@ -98,11 +98,6 @@
     .section {
       margin-top: 40px;
     }
-    .estado {
-      font-style: italic;
-      color: #b2ff59;
-      margin-left: 10px;
-    }
   </style>
 </head>
 <body>
@@ -143,49 +138,44 @@
       const codigos = {
         "BGA0465019": {
           url: "https://www.cma-cgm.com/ebusiness/tracking/search",
-          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png",
         },
         "BGA0466452": {
           url: "https://www.cma-cgm.com/ebusiness/tracking/search",
-          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png",
         },
         "27801824": {
           url: "https://www.hapag-lloyd.com/en/online-business/track/track-by-booking-solution.html?booking=27801824",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png",
         },
         "22505175": {
           url: "https://www.hapag-lloyd.com/es/online-business/track/track-by-booking-solution.html?view=S8510&container=CAIU++7045349",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png",
         },
         "ZIMUCRT909432": {
           url: "https://www.zim.com/tools/track-a-shipment?consnumber=ZIMUCRT909432",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png",
         },
         "251382139": {
           url: "https://www.maersk.com/tracking/251382139",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png",
         },
         "250248505": {
           url: "https://www.maersk.com/tracking/250248505",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png",
         },
         "COSU6413299240": {
           url: "https://elines.coscoshipping.com/ebusiness/cargoTracking",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/6/65/COSCO_Shipping_logo.png"
-        }
+          logo: "https://upload.wikimedia.org/wikipedia/commons/6/65/COSCO_Shipping_logo.png",
+        },
       };
 
-      // Base de datos con estado agregado
       let baseDatosRazones = {
-        "TARSON SAS": [
-          { codigo: "BGA0466452", naviera: "CMA ETD 02/05/2025 ETA 15/05/2025", estado: "En tránsito" },
-        ],
-        "CALI CARGO SAS": [
-          { codigo: "250248505", naviera: "maersk ETD 24/02/2025 ETA 17/03/2025", estado: "Entregado" },
-        ],
+        "TARSON SAS": [{ codigo: "BGA0466452", naviera: "CMA ETD 02/05/2025 ETA 15/05/2025" }],
+        "CALI CARGO SAS": [{ codigo: "250248505", naviera: "maersk ETD 24/02/3025 ETA 17/03/2025" }],
         "DARLINE EXPERT SAS": [
-          { codigo: "22505175", naviera: "Hapag-Lloyd ETD 21/06/2025 ETA 01/07/2025", estado: "En puerto" },
-          { codigo: "ZIMUCRT909432", naviera: "Agunza ETD 21/05/2025 ETA 26/05/2026", estado: "Despachado" }
+          { codigo: "22505175", naviera: "Hapag-Lloyd ETD 21/06/2025 ETA 01/07/2025" },
+          { codigo: "ZIMUCRT909432", naviera: "Agunza ETD 21/05/2025 ETA 26/05/2026" },
         ],
       };
 
@@ -198,15 +188,15 @@
         const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
         historialDiv.innerHTML = "";
 
-        historial.forEach(codigo => {
+        historial.forEach((codigo) => {
           const item = document.createElement("div");
           item.className = "historial-item";
           item.innerHTML = `
             <div style="display: flex; align-items: center;">
-              ${codigos[codigo]?.logo ? `<img class="logo" src="${codigos[codigo].logo}" alt="logo">` : ''}
+              ${codigos[codigo]?.logo ? `<img class="logo" src="${codigos[codigo].logo}" alt="logo">` : ""}
               <span>${codigo}</span>
             </div>
-            <button onclick="window.open('${codigos[codigo]?.url || '#'}', '_blank', 'width=1000,height=700')">🔍</button>
+            <button onclick="window.open('${codigos[codigo]?.url || "#"}', '_blank', 'width=1000,height=700')">🔍</button>
           `;
           historialDiv.appendChild(item);
         });
@@ -217,7 +207,7 @@
         const contenedor = document.getElementById("historialBusquedaRazones");
         contenedor.innerHTML = "";
 
-        historial.forEach(razon => {
+        historial.forEach((razon) => {
           const item = document.createElement("div");
           item.className = "historial-item";
           item.textContent = razon;
@@ -287,9 +277,8 @@
             item.className = "historial-item";
             item.innerHTML = `
               <div style="display: flex; align-items: center;">
-                ${codigos[resultado.codigo]?.logo ? `<img class="logo" src="${codigos[resultado.codigo].logo}" alt="logo">` : ''}
-                <span><strong>${resultado.codigo}</strong> - ${resultado.naviera}
-                <span class="estado">(${resultado.estado})</span></span>
+                ${codigos[resultado.codigo]?.logo ? `<img class="logo" src="${codigos[resultado.codigo].logo}" alt="logo">` : ""}
+                <span><strong>${resultado.codigo}</strong> - ${resultado.naviera}</span>
               </div>
               <button>🔍</button>
             `;
@@ -311,10 +300,12 @@
 
       document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
       document.getElementById("btnBuscarRazon").addEventListener("click", buscarRazonSocial);
+
       document.getElementById("limpiarHistorial").addEventListener("click", () => {
         localStorage.removeItem("trackingHistorial");
         mostrarHistorial();
       });
+
       document.getElementById("limpiarHistorialRazones").addEventListener("click", () => {
         localStorage.removeItem("historialRazones");
         mostrarHistorialRazones();
