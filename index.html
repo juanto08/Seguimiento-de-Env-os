@@ -51,10 +51,10 @@
       margin-bottom: 10px;
     }
     button:hover { background-color: #218838; }
-    #limpiarHistorial {
+    #limpiarHistorial, #limpiarHistorialRazones {
       background-color: #dc3545;
     }
-    #limpiarHistorial:hover {
+    #limpiarHistorial:hover, #limpiarHistorialRazones:hover {
       background-color: #c82333;
     }
     .spinner {
@@ -95,6 +95,9 @@
       width: 30px;
       margin-right: 10px;
     }
+    .section {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
@@ -110,6 +113,31 @@
       <h3>📜 Historial:</h3>
       <div id="listaHistorial"></div>
       <button id="limpiarHistorial">🗑️ Limpiar historial</button>
+    </div>
+
+    <div class="section">
+      <h2>📑 Buscar Razón Social</h2>
+      <input type="text" id="razonSocial" placeholder="Ingresa la razón social">
+      <button id="btnBuscarRazon">Buscar Razón Social</button>
+      
+      <div class="historial" id="historialRazones">
+        <h3>Códigos de Tracking para la Razón Social:</h3>
+        <div id="listaRazones"></div>
+      </div>
+
+      <div class="historial">
+        <h3>🕘 Historial de búsquedas:</h3>
+        <div id="historialBusquedaRazones"></div>
+        <button id="limpiarHistorialRazones">🗑️ Limpiar historial de razones sociales</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>➕ Agregar Nueva Razón Social</h2>
+      <input type="text" id="nuevaRazon" placeholder="Razón Social">
+      <input type="text" id="nuevoCodigo" placeholder="Código de Tracking">
+      <input type="text" id="nuevaNaviera" placeholder="Nombre de la Naviera">
+      <button id="btnAgregarRazon">Agregar</button>
     </div>
   </div>
 
@@ -150,9 +178,23 @@
         }
       };
 
+      let baseDatosRazones = {
+        "TARSON SAS": [
+          { codigo: "BGA0466452", naviera: "CMA ETD 02/05/2025 ETA 15/05/2025" },
+        ],
+        "CALI CARGO SAS": [
+          { codigo: "250248505", naviera: "maersk ETD 24/02/3025 ETA 17/03/2025" },
+        ],
+        "DARLINE EXPERT SAS": [
+          { codigo: "22505175", naviera: "Hapag-Lloyd ETD 21/06/2025 ETA 01/07/2025" },
+          { codigo: "ZIMUCRT909432", naviera: "Agunza ETD 21/05/2025 ETA 26/05/2026" }
+        ],
+      };
+
       const spinner = document.querySelector(".spinner");
       const mensaje = document.getElementById("mensaje");
       const historialDiv = document.getElementById("listaHistorial");
+      const historialRazonesDiv = document.getElementById("listaRazones");
 
       function mostrarHistorial() {
         const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
@@ -161,15 +203,41 @@
         historial.forEach(codigo => {
           const item = document.createElement("div");
           item.className = "historial-item";
-          item.innerHTML = `
+          item.innerHTML = 
             <div style="display: flex; align-items: center;">
-              ${codigos[codigo]?.logo ? `<img class="logo" src="${codigos[codigo].logo}" alt="logo">` : ''}
+              ${codigos[codigo]?.logo ? <img class="logo" src="${codigos[codigo].logo}" alt="logo"> : ''}
               <span>${codigo}</span>
             </div>
             <button onclick="window.open('${codigos[codigo]?.url || '#'}', '_blank', 'width=1000,height=700')">🔍</button>
-          `;
+          ;
           historialDiv.appendChild(item);
         });
+      }
+
+      function mostrarHistorialRazones() {
+        const historial = JSON.parse(localStorage.getItem("historialRazones")) || [];
+        const contenedor = document.getElementById("historialBusquedaRazones");
+        contenedor.innerHTML = "";
+
+        historial.forEach(razon => {
+          const item = document.createElement("div");
+          item.className = "historial-item";
+          item.textContent = razon;
+          item.addEventListener("click", () => {
+            document.getElementById("razonSocial").value = razon;
+            buscarRazonSocial();
+          });
+          contenedor.appendChild(item);
+        });
+      }
+
+      function guardarHistorialRazon(razon) {
+        let historial = JSON.parse(localStorage.getItem("historialRazones")) || [];
+        if (!historial.includes(razon)) {
+          historial.unshift(razon);
+          localStorage.setItem("historialRazones", JSON.stringify(historial.slice(0, 5)));
+        }
+        mostrarHistorialRazones();
       }
 
       function buscarTracking() {
@@ -197,7 +265,7 @@
         const height = 700;
         const left = (screen.width - width) / 2;
         const top = (screen.height - height) / 2;
-        window.open(url, "_blank", `width=${width},height=${height},left=${left},top=${top}`);
+        window.open(url, "_blank", width=${width},height=${height},left=${left},top=${top});
       }
 
       function guardarEnHistorial(codigo) {
@@ -209,13 +277,72 @@
         mostrarHistorial();
       }
 
+      function buscarRazonSocial() {
+        const razonSocial = document.getElementById("razonSocial").value.trim();
+        const resultados = baseDatosRazones[razonSocial];
+        guardarHistorialRazon(razonSocial);
+        historialRazonesDiv.innerHTML = "";
+
+        if (resultados) {
+          resultados.forEach((resultado) => {
+            const item = document.createElement("div");
+            item.className = "historial-item";
+            item.innerHTML = 
+              <div style="display: flex; align-items: center;">
+                ${codigos[resultado.codigo]?.logo ? <img class="logo" src="${codigos[resultado.codigo].logo}" alt="logo"> : ''}
+                <span><strong>${resultado.codigo}</strong> - ${resultado.naviera}</span>
+              </div>
+              <button>🔍</button>
+            ;
+            const lupaButton = item.querySelector("button");
+            lupaButton.addEventListener("click", () => {
+              const navieraUrl = codigos[resultado.codigo]?.url;
+              if (navieraUrl) {
+                window.open(navieraUrl, "_blank");
+              } else {
+                alert("No se encontró la URL para este código de tracking.");
+              }
+            });
+            historialRazonesDiv.appendChild(item);
+          });
+        } else {
+          historialRazonesDiv.innerHTML = <p style="color: #ff4d4d;">No se encontraron resultados para la razón social ingresada.</p>;
+        }
+      }
+
+      function agregarRazonSocial() {
+        const nuevaRazon = document.getElementById("nuevaRazon").value.trim();
+        const nuevoCodigo = document.getElementById("nuevoCodigo").value.trim().toUpperCase();
+        const nuevaNaviera = document.getElementById("nuevaNaviera").value.trim();
+
+        if (nuevaRazon && nuevoCodigo && nuevaNaviera) {
+          if (!baseDatosRazones[nuevaRazon]) {
+            baseDatosRazones[nuevaRazon] = [];
+          }
+          baseDatosRazones[nuevaRazon].push({ codigo: nuevoCodigo, naviera: nuevaNaviera });
+          alert("Razón social agregada correctamente. Ahora puedes buscarla.");
+          document.getElementById("nuevaRazon").value = '';
+          document.getElementById("nuevoCodigo").value = '';
+          document.getElementById("nuevaNaviera").value = '';
+        } else {
+          alert("Por favor completa todos los campos.");
+        }
+      }
+
       document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
+      document.getElementById("btnBuscarRazon").addEventListener("click", buscarRazonSocial);
+      document.getElementById("btnAgregarRazon").addEventListener("click", agregarRazonSocial);
       document.getElementById("limpiarHistorial").addEventListener("click", () => {
         localStorage.removeItem("trackingHistorial");
         mostrarHistorial();
       });
+      document.getElementById("limpiarHistorialRazones").addEventListener("click", () => {
+        localStorage.removeItem("historialRazones");
+        mostrarHistorialRazones();
+      });
 
       mostrarHistorial();
+      mostrarHistorialRazones();
     });
   </script>
 </body>
