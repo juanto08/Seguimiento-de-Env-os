@@ -173,26 +173,10 @@
       };
 
       const estadosCarga = {
-        "BGA0466452": {
-          salida: "ETD 02/05/2025",
-          llegada: "ETA 15/05/2025",
-          avance: "100%"
-        },
-        "22505175": {
-          salida: "ETD 21/06/2025",
-          llegada: "ETA 01/07/2025",
-          avance: "5%"
-        },
-        "250248505": {
-          salida: "ETD 24/02/2025",
-          llegada: "ETA 17/03/2025",
-          avance: "100%"
-        },
-        "ZIMUCRT909432": {
-          salida: "ETD 21/05/2025",
-          llegada: "ETA 26/05/2025",
-          avance: "20%"
-        },
+        "BGA0466452": { salida: "ETD 02/05/2025", llegada: "ETA 15/05/2025", avance: "100%" },
+        "22505175": { salida: "ETD 21/06/2025", llegada: "ETA 01/07/2025", avance: "5%" },
+        "250248505": { salida: "ETD 24/02/2025", llegada: "ETA 17/03/2025", avance: "100%" },
+        "ZIMUCRT909432": { salida: "ETD 21/05/2025", llegada: "ETA 26/05/2025", avance: "20%" },
       };
 
       const spinner = document.querySelector(".spinner");
@@ -302,6 +286,11 @@
             const llegada = estado.llegada ? `🚩 Llegada: ${estado.llegada}` : "";
             const avance = estado.avance ? `📊 Avance: ${estado.avance} ⏳` : "";
 
+            // Determinar el estado del GIF según el avance
+            const barcoGif = (estado.avance === "0%" || estado.avance === "100%") 
+              ? "https://i.gifer.com/DYyg.gif"  // GIF estático (barco quieto)
+              : "https://i.gifer.com/3Ecz.gif"; // GIF en movimiento (barco en movimiento)
+
             const item = document.createElement("div");
             item.className = "historial-item";
             item.innerHTML = `
@@ -313,6 +302,7 @@
                 ${salida ? `<div>${salida}</div>` : ""}
                 ${llegada ? `<div>${llegada}</div>` : ""}
                 ${avance ? `<div>${avance}</div>` : ""}
+                <img src="${barcoGif}" alt="Barco" width="50" />
               </div>
               <button>🔍</button>
             `;
