@@ -165,23 +165,26 @@
         ],
       };
 
-      // Estados separados para salida y llegada
       const estadosCarga = {
         "BGA0466452": {
           salida: "ETD 02/05/2025",
-          llegada: "ETA 15/05/2025"
+          llegada: "ETA 15/05/2025",
+          avance: "70%"
         },
         "22505175": {
           salida: "ETD 21/06/2025",
-          llegada: "ETA 01/07/2025"
+          llegada: "ETA 01/07/2025",
+          avance: "10%"
         },
         "250248505": {
           salida: "ETD 24/02/2025",
-          llegada: "ETA 17/03/2025"
+          llegada: "ETA 17/03/2025",
+          avance: "100%"
         },
         "ZIMUCRT909432": {
           salida: "ETD 21/05/2025",
-          llegada: "ETA 26/05/2026"
+          llegada: "ETA 26/05/2026",
+          avance: "50%"
         },
       };
 
@@ -282,6 +285,7 @@
             const estado = estadosCarga[codigo] || {};
             const salida = estado.salida ? `🏳️ Salida: ${estado.salida}` : "";
             const llegada = estado.llegada ? `🚩 Llegada: ${estado.llegada}` : "";
+            const avance = estado.avance ? `📊 Avance: ${estado.avance} ⏳` : "";
 
             const item = document.createElement("div");
             item.className = "historial-item";
@@ -293,6 +297,7 @@
               <div class="estado-carga">
                 ${salida ? `<div>${salida}</div>` : ""}
                 ${llegada ? `<div>${llegada}</div>` : ""}
+                ${avance ? `<div>${avance}</div>` : ""}
               </div>
               <button>🔍</button>
             `;
