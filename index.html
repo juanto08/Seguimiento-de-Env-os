@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Buscador de Tracking</title>
   <style>
     * { box-sizing: border-box; }
@@ -104,7 +104,7 @@
   <div class="container">
     <h1>🚚 Seguimiento de Envíos</h1>
 
-    <input type="text" id="tracking" placeholder="Ingresa tu código de tracking">
+    <input type="text" id="tracking" placeholder="Ingresa tu código de tracking" />
     <button id="btnBuscar">Buscar</button>
     <div class="spinner"></div>
     <p id="mensaje"></p>
@@ -117,9 +117,9 @@
 
     <div class="section">
       <h2>📑 Buscar Razón Social</h2>
-      <input type="text" id="razonSocial" placeholder="Ingresa la razón social">
+      <input type="text" id="razonSocial" placeholder="Ingresa la razón social" />
       <button id="btnBuscarRazon">Buscar Razón Social</button>
-      
+
       <div class="historial" id="historialRazones">
         <h3>Códigos de Tracking para la Razón Social:</h3>
         <div id="listaRazones"></div>
@@ -131,14 +131,6 @@
         <button id="limpiarHistorialRazones">🗑️ Limpiar historial de razones sociales</button>
       </div>
     </div>
-
-    <div class="section">
-      <h2>➕ Agregar Nueva Razón Social</h2>
-      <input type="text" id="nuevaRazon" placeholder="Razón Social">
-      <input type="text" id="nuevoCodigo" placeholder="Código de Tracking">
-      <input type="text" id="nuevaNaviera" placeholder="Nombre de la Naviera">
-      <button id="btnAgregarRazon">Agregar</button>
-    </div>
   </div>
 
   <script>
@@ -146,48 +138,44 @@
       const codigos = {
         "BGA0465019": {
           url: "https://www.cma-cgm.com/ebusiness/tracking/search",
-          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png",
         },
         "BGA0466452": {
           url: "https://www.cma-cgm.com/ebusiness/tracking/search",
-          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/CMA_CGM_logo.svg/320px-CMA_CGM_logo.svg.png",
         },
         "27801824": {
           url: "https://www.hapag-lloyd.com/en/online-business/track/track-by-booking-solution.html?booking=27801824",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png",
         },
         "22505175": {
           url: "https://www.hapag-lloyd.com/es/online-business/track/track-by-booking-solution.html?view=S8510&container=CAIU++7045349",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png",
         },
         "ZIMUCRT909432": {
           url: "https://www.zim.com/tools/track-a-shipment?consnumber=ZIMUCRT909432",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Hapag-Lloyd_logo_2014.svg/2560px-Hapag-Lloyd_logo_2014.svg.png",
         },
         "251382139": {
           url: "https://www.maersk.com/tracking/251382139",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png",
         },
         "250248505": {
           url: "https://www.maersk.com/tracking/250248505",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png"
+          logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Maersk_Group_Logo.svg/2560px-Maersk_Group_Logo.svg.png",
         },
         "COSU6413299240": {
           url: "https://elines.coscoshipping.com/ebusiness/cargoTracking",
-          logo: "https://upload.wikimedia.org/wikipedia/commons/6/65/COSCO_Shipping_logo.png"
-        }
+          logo: "https://upload.wikimedia.org/wikipedia/commons/6/65/COSCO_Shipping_logo.png",
+        },
       };
 
       let baseDatosRazones = {
-        "TARSON SAS": [
-          { codigo: "BGA0466452", naviera: "CMA ETD 02/05/2025 ETA 15/05/2025" },
-        ],
-        "CALI CARGO SAS": [
-          { codigo: "250248505", naviera: "maersk ETD 24/02/3025 ETA 17/03/2025" },
-        ],
+        "TARSON SAS": [{ codigo: "BGA0466452", naviera: "CMA ETD 02/05/2025 ETA 15/05/2025" }],
+        "CALI CARGO SAS": [{ codigo: "250248505", naviera: "maersk ETD 24/02/3025 ETA 17/03/2025" }],
         "DARLINE EXPERT SAS": [
           { codigo: "22505175", naviera: "Hapag-Lloyd ETD 21/06/2025 ETA 01/07/2025" },
-          { codigo: "ZIMUCRT909432", naviera: "Agunza ETD 21/05/2025 ETA 26/05/2026" }
+          { codigo: "ZIMUCRT909432", naviera: "Agunza ETD 21/05/2025 ETA 26/05/2026" },
         ],
       };
 
@@ -200,16 +188,16 @@
         const historial = JSON.parse(localStorage.getItem("trackingHistorial")) || [];
         historialDiv.innerHTML = "";
 
-        historial.forEach(codigo => {
+        historial.forEach((codigo) => {
           const item = document.createElement("div");
           item.className = "historial-item";
-          item.innerHTML = 
+          item.innerHTML = `
             <div style="display: flex; align-items: center;">
-              ${codigos[codigo]?.logo ? <img class="logo" src="${codigos[codigo].logo}" alt="logo"> : ''}
+              ${codigos[codigo]?.logo ? `<img class="logo" src="${codigos[codigo].logo}" alt="logo">` : ""}
               <span>${codigo}</span>
             </div>
-            <button onclick="window.open('${codigos[codigo]?.url || '#'}', '_blank', 'width=1000,height=700')">🔍</button>
-          ;
+            <button onclick="window.open('${codigos[codigo]?.url || "#"}', '_blank', 'width=1000,height=700')">🔍</button>
+          `;
           historialDiv.appendChild(item);
         });
       }
@@ -219,7 +207,7 @@
         const contenedor = document.getElementById("historialBusquedaRazones");
         contenedor.innerHTML = "";
 
-        historial.forEach(razon => {
+        historial.forEach((razon) => {
           const item = document.createElement("div");
           item.className = "historial-item";
           item.textContent = razon;
@@ -265,7 +253,7 @@
         const height = 700;
         const left = (screen.width - width) / 2;
         const top = (screen.height - height) / 2;
-        window.open(url, "_blank", width=${width},height=${height},left=${left},top=${top});
+        window.open(url, "_blank", `width=${width},height=${height},left=${left},top=${top}`);
       }
 
       function guardarEnHistorial(codigo) {
@@ -287,13 +275,13 @@
           resultados.forEach((resultado) => {
             const item = document.createElement("div");
             item.className = "historial-item";
-            item.innerHTML = 
+            item.innerHTML = `
               <div style="display: flex; align-items: center;">
-                ${codigos[resultado.codigo]?.logo ? <img class="logo" src="${codigos[resultado.codigo].logo}" alt="logo"> : ''}
+                ${codigos[resultado.codigo]?.logo ? `<img class="logo" src="${codigos[resultado.codigo].logo}" alt="logo">` : ""}
                 <span><strong>${resultado.codigo}</strong> - ${resultado.naviera}</span>
               </div>
               <button>🔍</button>
-            ;
+            `;
             const lupaButton = item.querySelector("button");
             lupaButton.addEventListener("click", () => {
               const navieraUrl = codigos[resultado.codigo]?.url;
@@ -306,36 +294,18 @@
             historialRazonesDiv.appendChild(item);
           });
         } else {
-          historialRazonesDiv.innerHTML = <p style="color: #ff4d4d;">No se encontraron resultados para la razón social ingresada.</p>;
-        }
-      }
-
-      function agregarRazonSocial() {
-        const nuevaRazon = document.getElementById("nuevaRazon").value.trim();
-        const nuevoCodigo = document.getElementById("nuevoCodigo").value.trim().toUpperCase();
-        const nuevaNaviera = document.getElementById("nuevaNaviera").value.trim();
-
-        if (nuevaRazon && nuevoCodigo && nuevaNaviera) {
-          if (!baseDatosRazones[nuevaRazon]) {
-            baseDatosRazones[nuevaRazon] = [];
-          }
-          baseDatosRazones[nuevaRazon].push({ codigo: nuevoCodigo, naviera: nuevaNaviera });
-          alert("Razón social agregada correctamente. Ahora puedes buscarla.");
-          document.getElementById("nuevaRazon").value = '';
-          document.getElementById("nuevoCodigo").value = '';
-          document.getElementById("nuevaNaviera").value = '';
-        } else {
-          alert("Por favor completa todos los campos.");
+          historialRazonesDiv.innerHTML = `<p style="color: #ff4d4d;">No se encontraron resultados para la razón social ingresada.</p>`;
         }
       }
 
       document.getElementById("btnBuscar").addEventListener("click", buscarTracking);
       document.getElementById("btnBuscarRazon").addEventListener("click", buscarRazonSocial);
-      document.getElementById("btnAgregarRazon").addEventListener("click", agregarRazonSocial);
+
       document.getElementById("limpiarHistorial").addEventListener("click", () => {
         localStorage.removeItem("trackingHistorial");
         mostrarHistorial();
       });
+
       document.getElementById("limpiarHistorialRazones").addEventListener("click", () => {
         localStorage.removeItem("historialRazones");
         mostrarHistorialRazones();
